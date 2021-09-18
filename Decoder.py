@@ -70,8 +70,9 @@ class ScanDecoder:
                 for address, dirs, files in self.folder:
                     for file in files:
                         self.decode_move(file)
+                print('go to sleep for ' + str(self.sleep_time) + 'secs on endless iterations')
                 time.sleep(self.sleep_time)
-                print('go to sleep for ' + str(self.sleep_time) + 'secs')
+
         else:
             for i in range(self.iterations_count):
                 for address, dirs, files in self.folder:
@@ -100,4 +101,5 @@ if __name__ == '__main__':
         decoder = ScanDecoder(sys.argv[1], sys.argv[2], bool(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]))
         decoder.start()
         exit(0)
+    print('wrong input\ntype "help" to see commands')
     exit(2)
