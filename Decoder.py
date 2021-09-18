@@ -1,3 +1,5 @@
+import sys
+
 from pyzbar import pyzbar
 import cv2
 import os
@@ -23,14 +25,18 @@ def is_correct_file(file):
 
 
 class ScanDecoder:
-    def __init__(self, master_dir, rename_dir, is_coping=False, sleep_time=300):
+    def __init__(self, master_dir, rename_dir, is_coping, sleep_time, iterations_count):
         self.master_dir = master_dir
         self.rename_dir = rename_dir
         self.folder = []
         self.is_coping = is_coping
-        self.is_need_to_stop = False
         self.sleep_time = sleep_time
+        self.iterations_count = iterations_count
         self.get_folder()
+        if iterations_count == -1:
+            self.is_need_to_stop = False
+        else:
+            self.is_need_to_stop = True
 
     def decode_move(self, file):
         if not is_correct_file(file):
@@ -45,8 +51,10 @@ class ScanDecoder:
             barcodeData = barcode.data.decode("utf-8")
             if self.is_coping:
                 shutil.copyfile(self.master_dir + str(file), self.rename_dir + str(barcodeData) + get_ext(file))
+                print('copied: ' + self.rename_dir + str(barcodeData) + get_ext(file))
             else:
                 shutil.move(self.master_dir + str(file), self.rename_dir + str(barcodeData) + get_ext(file))
+                print('moved: ' + self.rename_dir + str(barcodeData) + get_ext(file))
 
     def get_folder(self):
         # это генератор и повторно из него данные не получить, поэтому сохраним в переменную
@@ -57,15 +65,39 @@ class ScanDecoder:
             self.folder.append(i)
 
     def start(self):
-        while not self.is_need_to_stop:
-            for address, dirs, files in self.folder:
-                for file in files:
-                    self.decode_move(file)
-            time.sleep(self.sleep_time)
+        if not self.is_need_to_stop:
+            while not self.is_need_to_stop:
+                for address, dirs, files in self.folder:
+                    for file in files:
+                        self.decode_move(file)
+                time.sleep(self.sleep_time)
+                print('go to sleep for ' + str(self.sleep_time) + 'secs')
+        else:
+            for i in range(self.iterations_count):
+                for address, dirs, files in self.folder:
+                    for file in files:
+                        self.decode_move(file)
+                if i == self.iterations_count - 1:
+                    break
+                print('go to sleep for ' + str(self.sleep_time) + ' secs on iteration ' + str(i + 1))
+                time.sleep(self.sleep_time)
+        print('finished all ' + str(self.iterations_count) + ' iterations')
 
 
 if __name__ == '__main__':
-    directory_master = 'Test/'
-    directory_renamed = 'Renamed/'
-    decoder = ScanDecoder(directory_master, directory_renamed, True)
-    decoder.start()
+    if len(sys.argv) < 2:
+        print('{Master directory} {Rename directory} {is_coping} {sleep_time}')
+        print('commands: help')
+        exit(1)
+    if len(sys.argv) == 2 and sys.argv[1] == 'help':
+        print('Master directory - directory where scanning')
+        print('Rename_directory - directory with renamed files')
+        print('is_coping: if True, files are coping. If False, files are moving')
+        print('sleep_time - time in secs. Scanning loop iteration every sleep_time')
+        print('iteration_count - count of scanning iterations. If == -1 - infinite iterations')
+        exit(1)
+    if len(sys.argv) == 6:
+        decoder = ScanDecoder(sys.argv[1], sys.argv[2], bool(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]))
+        decoder.start()
+        exit(0)
+    exit(2)
