@@ -2,6 +2,7 @@ from pyzbar import pyzbar
 import cv2
 import os
 import shutil
+import time
 
 
 def get_ext(file):
@@ -22,11 +23,13 @@ def is_correct_file(file):
 
 
 class ScanDecoder:
-    def __init__(self, master_dir, rename_dir, is_coping):
+    def __init__(self, master_dir, rename_dir, is_coping=False, sleep_time=300):
         self.master_dir = master_dir
         self.rename_dir = rename_dir
         self.folder = []
         self.is_coping = is_coping
+        self.is_need_to_stop = False
+        self.sleep_time = sleep_time
         self.get_folder()
 
     def decode_move(self, file):
@@ -54,9 +57,11 @@ class ScanDecoder:
             self.folder.append(i)
 
     def start(self):
-        for address, dirs, files in self.folder:
-            for file in files:
-                self.decode_move(file)
+        while not self.is_need_to_stop:
+            for address, dirs, files in self.folder:
+                for file in files:
+                    self.decode_move(file)
+            time.sleep(self.sleep_time)
 
 
 if __name__ == '__main__':
