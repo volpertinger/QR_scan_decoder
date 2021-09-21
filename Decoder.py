@@ -10,7 +10,7 @@ import time
 def get_ext(file):
     file_str = str(file)
     if len(file_str) < 4:
-        return
+        return False
     return file_str[len(file_str) - 4:len(file_str)]
 
 
@@ -26,12 +26,12 @@ def is_correct_file(file):
 
 class ScanDecoder:
     def __init__(self, master_dir, rename_dir, is_coping, sleep_time, iterations_count):
-        self.master_dir = master_dir
-        self.rename_dir = rename_dir
+        self.master_dir = str(master_dir)
+        self.rename_dir = str(rename_dir)
         self.folder = []
-        self.is_coping = is_coping
-        self.sleep_time = sleep_time
-        self.iterations_count = iterations_count
+        self.is_coping = bool(is_coping)
+        self.sleep_time = int(sleep_time)
+        self.iterations_count = int(iterations_count)
         self.get_folder()
         if iterations_count == -1:
             self.is_need_to_stop = False
@@ -42,6 +42,7 @@ class ScanDecoder:
         if not is_correct_file(file):
             return
             # загружаем нужную картинку
+        print("md " + str(self.master_dir) + " |file " + str(file))
         image = cv2.imread(self.master_dir + str(file))
 
         # Находим qr коды в изображении и декодируем их (а вдруг сразу много в одной картинке)
