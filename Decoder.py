@@ -1,6 +1,5 @@
 import sys
-
-from pyzbar import pyzbar
+import pyzbar.pyzbar
 import cv2
 import os
 import shutil
@@ -52,7 +51,7 @@ class ScanDecoder:
         try:
             image = cv2.imread(self.master_dir + str(file))
             # Находим qr коды в изображении и декодируем их (а вдруг сразу много в одной картинке)
-            barcodes = pyzbar.decode(image)
+            barcodes = pyzbar.pyzbar.decode(image)
         except:
             print("Image read or decode error")
             return
