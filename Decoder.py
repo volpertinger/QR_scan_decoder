@@ -24,6 +24,13 @@ def is_correct_file(file):
     return True
 
 
+def get_bool(str_input):
+    if str_input == 'false' or str_input == 'False' or str_input == 0 or str_input == '&False' \
+            or str_input == '$false':
+        return False
+    return True
+
+
 class ScanDecoder:
     def __init__(self, master_dir, rename_dir, is_coping, sleep_time, iterations_count):
         self.master_dir = str(master_dir)
@@ -119,7 +126,7 @@ if __name__ == '__main__':
         print('iteration_count - count of scanning iterations. If == -1 - infinite iterations')
         exit(1)
     if len(sys.argv) == 6:
-        decoder = ScanDecoder(sys.argv[1], sys.argv[2], bool(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]))
+        decoder = ScanDecoder(sys.argv[1], sys.argv[2], get_bool(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]))
         decoder.start()
         exit(0)
     print('wrong input\ntype "help" to see commands')
