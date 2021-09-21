@@ -39,6 +39,7 @@ class ScanDecoder:
             self.is_need_to_stop = True
 
     def decode_move(self, file):
+        print("try_to_decode " + str(file))
         if not is_correct_file(file):
             return
             # загружаем нужную картинку
