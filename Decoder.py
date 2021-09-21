@@ -29,9 +29,9 @@ class ScanDecoder:
         self.master_dir = str(master_dir)
         self.rename_dir = str(rename_dir)
         self.folder = []
-        self.is_coping = bool(is_coping)
-        self.sleep_time = int(sleep_time)
-        self.iterations_count = int(iterations_count)
+        self.is_coping = is_coping
+        self.sleep_time = sleep_time
+        self.iterations_count = iterations_count
         self.get_folder()
         if iterations_count == -1:
             self.is_need_to_stop = False
@@ -70,6 +70,7 @@ class ScanDecoder:
                 for address, dirs, files in self.folder:
                     for file in files:
                         self.decode_move(file)
+                self.get_folder()
                 print('go to sleep for ' + str(self.sleep_time) + 'secs on endless iterations')
                 time.sleep(self.sleep_time)
 
@@ -80,6 +81,7 @@ class ScanDecoder:
                         self.decode_move(file)
                 if i == self.iterations_count - 1:
                     break
+                self.get_folder()
                 print('go to sleep for ' + str(self.sleep_time) + ' secs on iteration ' + str(i + 1))
                 time.sleep(self.sleep_time)
         print('finished all ' + str(self.iterations_count) + ' iterations')
