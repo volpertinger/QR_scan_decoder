@@ -42,25 +42,44 @@ class ScanDecoder:
         if not is_correct_file(file):
             return
             # загружаем нужную картинку
-        image = cv2.imread(self.master_dir + str(file))
-        # Находим qr коды в изображении и декодируем их (а вдруг сразу много в одной картинке)
-        barcodes = pyzbar.decode(image)
-        # цикл по всем qr кодам
+        try:
+            image = cv2.imread(self.master_dir + str(file))
+            # Находим qr коды в изображении и декодируем их (а вдруг сразу много в одной картинке)
+            barcodes = pyzbar.decode(image)
+        except:
+            print("Image read or decode error")
+            return
+            # цикл по всем qr кодам
         for barcode in barcodes:
             barcodeData = barcode.data.decode("utf-8")
-            os.rename(self.master_dir + str(file), self.master_dir + str(barcodeData) + get_ext(file))
+            try:
+                os.rename(self.master_dir + str(file), self.master_dir + str(barcodeData) + get_ext(file))
+            except:
+                print("Wrong bar data for name")
             if self.is_coping:
-                shutil.copy(self.master_dir + str(barcodeData) + get_ext(file), self.rename_dir)
-                print('copied: ' + self.rename_dir + str(barcodeData) + get_ext(file))
+                try:
+                    shutil.copy(self.master_dir + str(barcodeData) + get_ext(file), self.rename_dir)
+                    print('copied: ' + self.rename_dir + str(barcodeData) + get_ext(file))
+                except:
+                    print("Copy error")
+                    return
             else:
-                shutil.move(self.master_dir + str(barcodeData) + get_ext(file), self.rename_dir)
-                print('moved: ' + self.rename_dir + str(barcodeData) + get_ext(file))
+                try:
+                    shutil.move(self.master_dir + str(barcodeData) + get_ext(file), self.rename_dir)
+                    print('moved: ' + self.rename_dir + str(barcodeData) + get_ext(file))
+                except:
+                    print("Moving error")
+                    return
 
     def get_folder(self):
         # это генератор и повторно из него данные не получить, поэтому сохраним в переменную
         # каждый элемент обхода будет содержать 3 элемента:
         # [Адрес каталога] [Список поддиректорий первого уровня] [Список файлов]
-        tree = os.walk(self.master_dir)
+        try:
+            tree = os.walk(self.master_dir)
+        except:
+            print("Folder walk error")
+            return
         for i in tree:
             self.folder.append(i)
 
