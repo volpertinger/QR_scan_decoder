@@ -39,23 +39,21 @@ class ScanDecoder:
             self.is_need_to_stop = True
 
     def decode_move(self, file):
-        print("try_to_decode " + str(file))
         if not is_correct_file(file):
             return
             # загружаем нужную картинку
-        print("md " + str(self.master_dir) + " |file " + str(file))
         image = cv2.imread(self.master_dir + str(file))
-
         # Находим qr коды в изображении и декодируем их (а вдруг сразу много в одной картинке)
         barcodes = pyzbar.decode(image)
         # цикл по всем qr кодам
         for barcode in barcodes:
             barcodeData = barcode.data.decode("utf-8")
+            os.rename(self.master_dir + str(file), self.master_dir + str(barcodeData) + get_ext(file))
             if self.is_coping:
-                shutil.copyfile(self.master_dir + str(file), self.rename_dir + str(barcodeData) + get_ext(file))
+                shutil.copy(self.master_dir + str(barcodeData) + get_ext(file), self.rename_dir)
                 print('copied: ' + self.rename_dir + str(barcodeData) + get_ext(file))
             else:
-                shutil.move(self.master_dir + str(file), self.rename_dir + str(barcodeData) + get_ext(file))
+                shutil.move(self.master_dir + str(barcodeData) + get_ext(file), self.rename_dir)
                 print('moved: ' + self.rename_dir + str(barcodeData) + get_ext(file))
 
     def get_folder(self):
