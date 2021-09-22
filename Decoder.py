@@ -114,7 +114,7 @@ class ScanDecoder:
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print('{Master directory} {Rename directory} {is_coping} {sleep_time}')
+        print('{Master directory} {Rename directory} {is_coping} {sleep_time} {number_of_iterations}')
         print('commands: help')
         exit(1)
     if len(sys.argv) == 2 and sys.argv[1] == 'help':
