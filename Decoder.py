@@ -116,17 +116,14 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('{Master directory} {Rename directory} {is_coping} {sleep_time} {number_of_iterations}')
         print('commands: help')
-        exit(1)
-    if len(sys.argv) == 2 and sys.argv[1] == 'help':
+    elif len(sys.argv) == 2 and sys.argv[1] == 'help':
         print('Master directory - directory where scanning')
         print('Rename_directory - directory with renamed files')
         print('is_coping: if True, files are coping. If False, files are moving')
         print('sleep_time - time in secs. Scanning loop iteration every sleep_time')
         print('iteration_count - count of scanning iterations. If == -1 - infinite iterations')
-        exit(1)
-    if len(sys.argv) == 6:
+    elif len(sys.argv) == 6:
         decoder = ScanDecoder(sys.argv[1], sys.argv[2], get_bool(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]))
         decoder.start()
-        exit(0)
-    print('wrong input\ntype "help" to see commands')
-    exit(2)
+    else:
+        print('wrong input\ntype "help" to see commands')
